@@ -2,7 +2,11 @@
 
 namespace IbanDominguez\RestUp;
 
-class Route {
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+
+class Route
+{
 
   public function __construct($name, $path, $method, array $fields)
   {
@@ -10,6 +14,20 @@ class Route {
     $this->path = $path;
     $this->method = $method;
     $this->fields = $fields;
+  }
+
+  public function makeClousure()
+  {
+    return function(Request $request, Response $response) {
+      //
+    };
+  }
+
+  public function makeMiddleware()
+  {
+    return function(Request $request, Response $response, callable $next) {
+      //
+    };
   }
 
 }

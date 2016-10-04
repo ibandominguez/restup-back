@@ -5,7 +5,8 @@ namespace IbanDominguez\RestUp;
 use IbanDominguez\RestUp\Route;
 use Exception;
 
-class Resource {
+class Resource
+{
 
   protected $routes = [];
 
