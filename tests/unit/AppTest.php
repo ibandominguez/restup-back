@@ -11,7 +11,7 @@ class AppTest extends TestCase
     $this->assertInstanceOf('IbanDominguez\RestUp\App', new App());
   }
 
-  public function testItRegistersRoutes()
+  public function testItRegistersResource()
   {
     $app = new App();
 
