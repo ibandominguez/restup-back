@@ -11,7 +11,7 @@ class Resource
   /**
    * @var array
    */
-  protected $routes = [];
+  public $routes = [];
 
   /**
    * @param string
@@ -19,12 +19,12 @@ class Resource
    * @param array
    * @return void
    */
-  public function __construct($title, array $fields, array $routes = [])
+  public function __construct($title, array $fields)
   {
     $this->title = $title;
     $this->fields = $fields;
     $this->validateFields();
-    $this->handleRoutes($routes);
+    $this->handleRoutes();
   }
 
   /**
@@ -66,19 +66,13 @@ class Resource
    */
   private function handleRoutes()
   {
-    if (!empty($routes)):
-      foreach ($routes as $route):
-        $this->routes[] = new Route($route['name'], $route['path'], $route['method'], $this->fields);
-      endforeach;
-    else:
-      $this->routes = [
-        new Route('index', $this->title.'/', 'GET', $this->fields),
-        new Route('show', $this->title.'/:id', 'GET', $this->fields),
-        new Route('store', $this->title.'/', 'POST', $this->fields),
-        new Route('update', $this->title.'/:id', 'PUT', $this->fields),
-        new Route('delete', $this->title.'/:id', 'DELETE', $this->fields)
-      ];
-    endif;
+    $this->routes = [
+      new Route('index', '/'.$this->title, 'GET', $this->fields),
+      new Route('show', '/'.$this->title.'/{id}', 'GET', $this->fields),
+      new Route('store', '/'.$this->title, 'POST', $this->fields),
+      new Route('update', '/'.$this->title.'/{id}', 'PUT', $this->fields),
+      new Route('delete', '/'.$this->title.'/{id}', 'DELETE', $this->fields)
+    ];
   }
 
 }

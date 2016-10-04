@@ -28,18 +28,10 @@ class Route
    */
   public function makeClousure()
   {
-    return function(Request $request, Response $response) {
-      //
-    };
-  }
+    $self = $this;
 
-  /**
-   * @return callable
-   */
-  public function makeMiddleware()
-  {
-    return function(Request $request, Response $response, callable $next) {
-      //
+    return function(Request $request, Response $response) use ($self) {
+      return $response->withJson($self);
     };
   }
 
