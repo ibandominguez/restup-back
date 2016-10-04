@@ -8,8 +8,17 @@ use Exception;
 class Resource
 {
 
+  /**
+   * @var array
+   */
   protected $routes = [];
 
+  /**
+   * @param string
+   * @param array
+   * @param array
+   * @return void
+   */
   public function __construct($title, array $fields, array $routes = [])
   {
     $this->title = $title;
@@ -18,11 +27,17 @@ class Resource
     $this->handleRoutes($routes);
   }
 
+  /**
+   * @return array
+   */
   public function getRoutes()
   {
     return $this->routes;
   }
 
+  /**
+   * @return void
+   */
   private function validateFields()
   {
      foreach ($this->fields as $field):
@@ -30,6 +45,9 @@ class Resource
      endforeach;
   }
 
+  /**
+   * @return void
+   */
   private function validateField($field)
   {
     if (empty($field['key']) || empty($field['type'])):
@@ -43,6 +61,9 @@ class Resource
     endforeach;
   }
 
+  /**
+   * @return void
+   */
   private function handleRoutes()
   {
     if (!empty($routes)):

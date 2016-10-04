@@ -5,8 +5,16 @@ namespace IbanDominguez\RestUp;
 class App
 {
 
+  /**
+   * @var array
+   */
   protected $resources = [];
 
+  /**
+   * @param string
+   * @param array
+   * @return IbanDominguez\RestUp\App
+   */
   public function add($title, $fields)
   {
     $this->resources[] = new Resource($title, $fields);
@@ -14,6 +22,9 @@ class App
     return $this;
   }
 
+  /**
+   * @return array
+   */
   public function getResources()
   {
     return $this->resources;
