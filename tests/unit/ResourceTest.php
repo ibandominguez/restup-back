@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use IbanDominguez\RestUp\Resource;
 use InvalidArgumentException;
+use Exception;
 
 class ResourceTest extends TestCase
 {
@@ -27,6 +28,25 @@ class ResourceTest extends TestCase
   {
     $this->expectException(InvalidArgumentException::class);
     new Resource();
+  }
+
+  public function testThrowsAnExpetionIfRouteConfigIsNotValid()
+  {
+    $this->expectException(Exception::class);
+    new Resource('posts', [[]]);
+  }
+
+  public function testResouceCreatesRoutes()
+  {
+    $resource = new Resource('posts', [
+      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+    ]);
+
+    $routes = $resource->getRoutes();
+
+    $this->assertTrue(count($routes) == 5);
+    $this->assertInstanceOf('IbanDominguez\RestUp\Route', $routes[0]);
   }
 
 }
