@@ -2,9 +2,10 @@
 
 namespace IbanDominguez\RestUp;
 
-class App {
+class App
+{
 
-  protected $resources;
+  protected $resources = [];
 
   public function add($title, $fields)
   {
