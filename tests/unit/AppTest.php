@@ -16,10 +16,8 @@ class AppTest extends TestCase
     $app = new App();
 
     $app->add('posts', [
-      'fields' => [
-        'title' => ['type' => 'string', 'rules' => 'required|string'],
-        'content' => ['type' => 'string', 'rules' => 'required|string'],
-      ]
+      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
     ]);
 
     $resources = $app->getResources();
