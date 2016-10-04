@@ -1,0 +1,52 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+use IbanDominguez\RestUp\Resource;
+use InvalidArgumentException;
+use Exception;
+
+class ResourceTest extends TestCase
+{
+
+  protected function setUp()
+  {
+    set_error_handler(array($this, 'errorHandler'));
+  }
+
+  public function errorHandler($errno, $errstr, $errfile, $errline)
+  {
+    throw new InvalidArgumentException(sprintf(
+      'Missing argument. %s %s %s %s',
+      $errno,
+      $errstr,
+      $errfile,
+      $errline
+    ));
+  }
+
+  public function testThrowsAnExpetionIfParamsAreInvalid()
+  {
+    $this->expectException(InvalidArgumentException::class);
+    new Resource();
+  }
+
+  public function testThrowsAnExpetionIfRouteConfigIsNotValid()
+  {
+    $this->expectException(Exception::class);
+    new Resource('posts', [[]]);
+  }
+
+  public function testResouceCreatesRoutes()
+  {
+    $resource = new Resource('posts', [
+      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+    ]);
+
+    $routes = $resource->getRoutes();
+
+    $this->assertTrue(count($routes) == 5);
+    $this->assertInstanceOf('IbanDominguez\RestUp\Route', $routes[0]);
+  }
+
+}
