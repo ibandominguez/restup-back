@@ -9,6 +9,11 @@ class App
 {
 
   /**
+   * @var Slim\App
+   */
+  protected $slim;
+
+  /**
    * @var array
    */
   protected $resources = [];
@@ -42,17 +47,6 @@ class App
   }
 
   /**
-   * @param PDO
-   * @return IbanDominguez\RestUp\App
-   */
-  public function setDatabase(PDO $database)
-  {
-    $this->db = $database;
-
-    return $this;
-  }
-
-  /**
    * @return void
    */
   public function run()
@@ -68,9 +62,7 @@ class App
   {
     foreach ($this->resources as $resource):
       foreach ($resource->routes as $route):
-        $method = strtolower($route->method);
-
-        $this->slim->$method($route->path, $route->makeClousure());
+        $this->slim->map([strtoupper($route->method)], $route->path, $route->makeClousure());
       endforeach;
     endforeach;
   }

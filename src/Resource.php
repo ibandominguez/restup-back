@@ -66,13 +66,9 @@ class Resource
    */
   private function handleRoutes()
   {
-    $this->routes = [
-      new Route('index', '/'.$this->title, 'GET', $this->fields),
-      new Route('show', '/'.$this->title.'/{id}', 'GET', $this->fields),
-      new Route('store', '/'.$this->title, 'POST', $this->fields),
-      new Route('update', '/'.$this->title.'/{id}', 'PUT', $this->fields),
-      new Route('delete', '/'.$this->title.'/{id}', 'DELETE', $this->fields)
-    ];
+    foreach (['list', 'show', 'save', 'update', 'delete'] as $route):
+      $this->routes[] = new Route($route, $this);
+    endforeach;
   }
 
 }
