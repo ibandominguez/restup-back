@@ -35,4 +35,12 @@ class RouteTest extends TestCase
     ]));
   }
 
+  public function testClassIntanciates()
+  {
+    $this->assertInstanceOf('IbanDominguez\RestUp\Route',  new Route('list', new Resource('posts', [
+      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+    ])));
+  }
+
 }
