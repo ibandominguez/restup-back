@@ -4,6 +4,7 @@ namespace IbanDominguez\RestUp;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use IbanDominguez\RestUp\Resource;
 use Exception;
 
 class Route
@@ -32,7 +33,7 @@ class Route
    * @param array
    * @return void
    */
-  public function __construct($name, $resource)
+  public function __construct($name, Resource $resource)
   {
     $this->name = $name;
     $this->resource = $resource;
