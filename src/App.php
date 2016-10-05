@@ -29,7 +29,7 @@ class App
   public function __construct(array $config)
   {
     $this->config = $config;
-    $this->slim = new Slim();
+    $this->slim = new Slim(['settings' => ['displayErrorDetails' => true]]);
   }
 
   /**
@@ -55,9 +55,10 @@ class App
   /**
    * @return void
    */
-  public function run()
+  public function run($migrateDB)
   {
     $this->bootDatabase();
+    ($migrateDB) && $this->migrateDB();
     $this->bindRoutes();
     $this->slim->run();
   }
@@ -68,6 +69,8 @@ class App
   private function bindRoutes()
   {
     foreach ($this->resources as $resource):
+      $resource->setDB($this->db);
+
       foreach ($resource->routes as $route):
         $this->slim->map([strtoupper($route->method)], $route->path, $route->makeClousure());
       endforeach;
@@ -84,6 +87,28 @@ class App
       $this->config['DB_USER'],
       $this->config['DB_PASS']
     );
+  }
+
+  /**
+   * @return void
+   */
+  private function migrateDB()
+  {
+    $this->db->exec('CREATE TABLE IF NOT EXISTS resources(
+      id INT(11) AUTO_INCREMENT PRIMARY KEY,
+      type VARCHAR(50) NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
+    )');
+
+    $this->db->exec('CREATE TABLE IF NOT EXISTS fields(
+      id INT(11) AUTO_INCREMENT PRIMARY KEY,
+      resource_id INT(11),
+      title VARCHAR(50) NOT NULL,
+      value TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
+    )');
   }
 
 }
