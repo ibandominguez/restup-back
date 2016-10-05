@@ -14,6 +14,11 @@ class App
   protected $slim;
 
   /**
+   * @var PDO
+   */
+  protected $db;
+
+  /**
    * @var array
    */
   protected $resources = [];
@@ -21,8 +26,9 @@ class App
   /**
    * @return void
    */
-  public function __construct()
+  public function __construct(array $config)
   {
+    $this->config = $config;
     $this->slim = new Slim();
   }
 
@@ -51,6 +57,7 @@ class App
    */
   public function run()
   {
+    $this->bootDatabase();
     $this->bindRoutes();
     $this->slim->run();
   }
@@ -65,6 +72,18 @@ class App
         $this->slim->map([strtoupper($route->method)], $route->path, $route->makeClousure());
       endforeach;
     endforeach;
+  }
+
+  /**
+   * @return void
+   */
+  private function bootDatabase()
+  {
+    $this->db = new PDO(
+      'mysql:host='.$this->config['DB_HOST'].';dbname='.$this->config['DB_NAME'],
+      $this->config['DB_USER'],
+      $this->config['DB_PASS']
+    );
   }
 
 }
