@@ -19,7 +19,7 @@ class Route
    * @var array
    */
   protected $routesNames = [
-    'list'   => ['method' => 'GET',    'path' => '/%s'],
+    'index'   => ['method' => 'GET',    'path' => '/%s'],
     'show'   => ['method' => 'GET',    'path' => '/%s/{id}'],
     'save'   => ['method' => 'POST',   'path' => '/%s'],
     'update' => ['method' => 'PUT',    'path' => '/%s/{id}'],
@@ -46,10 +46,11 @@ class Route
    */
   public function makeClousure()
   {
+    $resource = $this->resource;
     $route = $this;
 
-    return function(Request $request, Response $response) use ($route) {
-      return $response->withJson($route);
+    return function(Request $request, Response $response) use ($resource, $route) {
+      return $resource->{$route->name}($request, $response);
     };
   }
 
