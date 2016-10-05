@@ -8,16 +8,16 @@ class AppTest extends TestCase
 
   public function testClassIntanciates()
   {
-    $this->assertInstanceOf('IbanDominguez\RestUp\App', new App());
+    $this->assertInstanceOf('IbanDominguez\RestUp\App', new App([]));
   }
 
   public function testItRegistersResource()
   {
-    $app = new App();
+    $app = new App([]);
 
     $app->add('posts', [
-      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
-      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+      ['title' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['title' => 'body', 'type' => 'string', 'rules' => 'required|string']
     ]);
 
     $resources = $app->getResources();
