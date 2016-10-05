@@ -34,8 +34,8 @@ class ResourceTest extends TestCase
   public function testResouceCreatesRoutes()
   {
     $resource = new Resource('posts', [
-      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
-      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+      ['title' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['title' => 'body', 'type' => 'string', 'rules' => 'required|string']
     ]);
 
     $routes = $resource->getRoutes();

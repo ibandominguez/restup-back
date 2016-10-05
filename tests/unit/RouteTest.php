@@ -30,16 +30,16 @@ class RouteTest extends TestCase
   {
     $this->expectException(Exception::class);
     new Route('other', new Resource('posts', [
-      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
-      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+      ['title' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['title' => 'body', 'type' => 'string', 'rules' => 'required|string']
     ]));
   }
 
   public function testClassIntanciates()
   {
     $this->assertInstanceOf('IbanDominguez\RestUp\Route',  new Route('index', new Resource('posts', [
-      ['key' => 'title', 'type' => 'string', 'rules' => 'required|string'],
-      ['key' => 'body', 'type' => 'string', 'rules' => 'required|string']
+      ['title' => 'title', 'type' => 'string', 'rules' => 'required|string'],
+      ['title' => 'body', 'type' => 'string', 'rules' => 'required|string']
     ])));
   }
 
