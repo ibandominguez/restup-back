@@ -1,8 +1,3 @@
-# Restup
-Build a rest api in a single file.
-
-## Use Example
-```php
 <?php
 
 require __DIR__.'/../vendor/autoload.php';
@@ -25,21 +20,3 @@ App::create([
   ['title' => 'brand', 'type' => 'string']
 ])
 ->run(true);
-```
-
-## Tests
-```sh
-git clone https://github.com/ibandominguez/restup-back.git
-cd restup-back
-phpunit
-```
-
-## Roadmap
-* Image uploads
-* JWT auth configurable routes
-
-## Contributors
-* Ibán Domínguez
-
-## License
-Mit

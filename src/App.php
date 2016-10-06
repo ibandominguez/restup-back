@@ -67,7 +67,7 @@ class App
   /**
    * @return void
    */
-  public function run($migrateDB)
+  public function run($migrateDB = false)
   {
     ($migrateDB) && $this->migrateDB();
     $this->bindRoutes();

@@ -19,7 +19,7 @@ class Route
    * @var array
    */
   protected $routesNames = [
-    'index'   => ['method' => 'GET',    'path' => '/%s'],
+    'index'  => ['method' => 'GET',    'path' => '/%s'],
     'show'   => ['method' => 'GET',    'path' => '/%s/{id}'],
     'save'   => ['method' => 'POST',   'path' => '/%s'],
     'update' => ['method' => 'PUT',    'path' => '/%s/{id}'],
