@@ -111,6 +111,9 @@ class App
     )');
   }
 
+  /**
+   * @return void
+   */
   private function setSlimDefaultConfigurations()
   {
     $container = $this->slim->getContainer();
