@@ -7,7 +7,7 @@ use Slim\App as Slim;
 class AppTest extends TestCase
 {
 
-  public function testClassIntanciates()
+  public function testClassInstanciates()
   {
     $this->assertInstanceOf('IbanDominguez\RestUp\App', new App(
       new PDO('sqlite::memory:'),
