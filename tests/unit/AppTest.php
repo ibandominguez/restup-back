@@ -2,18 +2,25 @@
 
 use PHPUnit\Framework\TestCase;
 use IbanDominguez\RestUp\App;
+use Slim\App as Slim;
 
 class AppTest extends TestCase
 {
 
   public function testClassIntanciates()
   {
-    $this->assertInstanceOf('IbanDominguez\RestUp\App', new App([]));
+    $this->assertInstanceOf('IbanDominguez\RestUp\App', new App(
+      new PDO('sqlite::memory:'),
+      new Slim()
+    ));
   }
 
   public function testItRegistersResource()
   {
-    $app = new App([]);
+    $app = new App(
+      new PDO('sqlite::memory:'),
+      new Slim()
+    );
 
     $app->add('posts', [
       ['title' => 'title', 'type' => 'string', 'rules' => 'required|string'],
