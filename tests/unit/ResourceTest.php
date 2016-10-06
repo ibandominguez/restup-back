@@ -44,4 +44,12 @@ class ResourceTest extends TestCase
     $this->assertInstanceOf('IbanDominguez\RestUp\Route', $routes[0]);
   }
 
+  public function testInvalidTypes()
+  {
+    $this->expectException(Exception::class);
+    new Resource('posts', [
+      ['title' => 'title', 'type' => 'invalidtype']
+    ]);
+  }
+
 }
