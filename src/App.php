@@ -104,10 +104,10 @@ class App
     $this->db->exec('CREATE TABLE IF NOT EXISTS fields(
       id INT(11) AUTO_INCREMENT PRIMARY KEY,
       resource_id INT(11),
+      type VARCHAR(50) NOT NULL,
       title VARCHAR(50) NOT NULL,
       value TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )');
   }
 
@@ -127,6 +127,12 @@ class App
     $container['errorHandler'] = function ($container) {
       return function ($request, $response, $exception) use ($container) {
         return $container['response']->withJson(['error' => 'Interval Server Error'], 500);
+      };
+    };
+
+    $container['notAllowedHandler'] = function ($container) {
+      return function ($request, $response, $exception) use ($container) {
+        return $container['response']->withJson(['error' => 'Method not allowed'], 405);
       };
     };
   }

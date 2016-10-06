@@ -17,6 +17,21 @@ class Resource
   public $routes = [];
 
   /**
+   * @var array
+   */
+  public $types = ['string', 'number', 'date', 'datetime'];
+
+  /**
+   * @var string
+   */
+  public $groupsSeparator = '<[*^!$-groups-$!^]*>';
+
+  /**
+   * @var string
+   */
+  public $groupSeparator = '<[*^=$->group<-$=^]*>';
+
+  /**
    * @var PDO
    */
   protected $db;
@@ -61,7 +76,7 @@ class Resource
     $query = $this->db->prepare("
       select * from resources
       join (
-        select fields.resource_id, group_concat(fields.title, '[:]', fields.value SEPARATOR '[|]') as data
+        select fields.resource_id, group_concat(fields.title, '$this->groupSeparator', fields.value SEPARATOR '$this->groupSeparator') as data
         from fields
         group by fields.resource_id
       ) as fields on fields.resource_id = resources.id
@@ -73,11 +88,11 @@ class Resource
     $parsedResults = [];
 
     foreach ($results as $result):
-      $fieldGroups = explode('[|]', $result['data']);
+      $fieldGroups = explode($this->groupsSeparator, $result['data']);
       $fields = [];
 
       foreach ($fieldGroups as $group):
-        $group = explode('[:]', $group);
+        $group = explode($this->groupSeparator, $group);
         $fields[$group[0]] = $group[1];
       endforeach;
 
@@ -125,23 +140,10 @@ class Resource
   public function save(Request $request, Response $response)
   {
     $this->db->prepare("insert into resources (type) values ('$this->title')")->execute();
-    $resourceId = $this->db->lastInsertId();
-    $res = ['id' => $resourceId];
+    $request = $request->withAttribute('id', $this->db->lastInsertId());
+    $res = $this->updateFields($request);
 
-    foreach ($this->fields as $field):
-      $key = $field['title'];
-      $param = $request->getParam($key);
-
-      if (!empty($param)):
-        $this->db
-          ->prepare("insert into fields (resource_id, title, value) values (?, ?, ?)")
-          ->execute([$resourceId, $key, $param]);
-
-        $res[$key] = $param;
-      endif;
-    endforeach;
-
-    return $response->withJson($res, !empty($request->getAttribute('id')) ? 200 : 201);
+    return $response->withJson($res, 200);
   }
 
   /**
@@ -152,9 +154,12 @@ class Resource
   public function update(Request $request, Response $response)
   {
     $id = $request->getAttribute('id');
+    $request->withAttribute('id', $id);
+    $this->db->prepare("update resources set updated_at = NOW() where id = ?")->execute([$id]);
     $this->db->prepare("delete from fields where resource_id = ?")->execute([$id]);
+    $res = $this->updateFields($request);
 
-    return $this->save($request, $response);
+    return $response->withJson($res, 201);
   }
 
   /**
@@ -164,11 +169,35 @@ class Resource
    */
   public function delete(Request $request, Response $response)
   {
-    $id = $request->getAttribute('id');
     $this->db->prepare("delete from resources where id = ?")->execute([$id]);
     $this->db->prepare("delete from fields where resource_id = ?")->execute([$id]);
 
     return $response->withJson(null, 204);
+  }
+
+  /**
+   * @param Psr\Http\Message\ServerRequestInterface
+   * @return array
+   */
+  private function updateFields(Request $request)
+  {
+    $id = $request->getAttribute('id');
+    $updateFields = ['id' => $id];
+
+    foreach ($this->fields as $field):
+      $key = $field['title'];
+      $param = $request->getParam($key);
+
+      if (!empty($param)):
+        $this->db
+          ->prepare("insert into fields (resource_id, type, title, value) values (?, ?, ?, ?)")
+          ->execute([$id, $this->getFieldType($key), $key, $param]);
+
+        $updateFields[$key] = $param;
+      endif;
+    endforeach;
+
+    return $updateFields;
   }
 
   /**
@@ -190,6 +219,10 @@ class Resource
       throw new Exception('Title and type keys are required');
     endif;
 
+    if (!in_array($field['type'], $this->types)):
+      throw new Exception('Type must be one of the followings '.explode(',', $this->types));
+    endif;
+
     foreach ($field as $key):
       if (empty($key) || !is_string($key)):
         throw new Exception('Keys are required and must be strings');
@@ -205,6 +238,23 @@ class Resource
     foreach (['index', 'show', 'save', 'update', 'delete'] as $route):
       $this->routes[] = new Route($route, $this);
     endforeach;
+  }
+
+  /**
+   * @param string
+   * @return string
+   */
+  private function getFieldType($title)
+  {
+    $type = null;
+
+    foreach ($this->fields as $field):
+      if ($field['title'] == $title):
+        $type = $field['type'];
+      endif;
+    endforeach;
+
+    return $type;
   }
 
 }
