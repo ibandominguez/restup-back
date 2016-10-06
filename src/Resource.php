@@ -169,6 +169,7 @@ class Resource
    */
   public function delete(Request $request, Response $response)
   {
+    $id = $request->getAttribute('id');
     $this->db->prepare("delete from resources where id = ?")->execute([$id]);
     $this->db->prepare("delete from fields where resource_id = ?")->execute([$id]);
 
