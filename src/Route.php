@@ -5,6 +5,7 @@ namespace IbanDominguez\RestUp;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use IbanDominguez\RestUp\Resource;
+use IbanDominguez\Validator\Validator;
 use Exception;
 
 class Route
@@ -50,6 +51,10 @@ class Route
     $route = $this;
 
     return function(Request $request, Response $response) use ($resource, $route) {
+      if ($errors = $route->getRequestValidationErrors($request)):
+        return $response->withJson(['error' => array_values($errors)[0]], 400);
+      endif;
+
       return $resource->{$route->name}($request, $response);
     };
   }
@@ -78,6 +83,21 @@ class Route
     endif;
 
     return $method;
+  }
+
+  /**
+   * @param Request
+   * @return bool
+   */
+  private function getRequestValidationErrors(Request $request)
+  {
+    if (!in_array(strtolower($request->getMethod()), ['post', 'put'])):
+      return [];
+    endif;
+
+    $validator = new Validator($request->getParsedBody(), $this->resource->getFieldRules());
+
+    return $validator->passes() ? [] : $validator->getErrors();
   }
 
 }

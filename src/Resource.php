@@ -201,6 +201,22 @@ class Resource
   }
 
   /**
+   * @return array
+   */
+  public function getFieldRules()
+  {
+    $rules = [];
+
+    foreach ($this->fields as $field):
+      if (!empty($field['rules'])):
+        $rules[$field['title']] = $field['rules'];
+      endif;
+    endforeach;
+
+    return $rules;
+  }
+
+  /**
    * @return void
    */
   private function validateFields()

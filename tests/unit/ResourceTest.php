@@ -52,4 +52,13 @@ class ResourceTest extends TestCase
     ]);
   }
 
+  public function testItRetrievesRules()
+  {
+    $resource = new Resource('posts', [
+      ['title' => 'title', 'type' => 'string', 'rules' => 'required']
+    ]);
+
+    $this->assertEquals($resource->getFieldRules()['title'], 'required');
+  }
+
 }
