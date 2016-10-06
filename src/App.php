@@ -129,6 +129,12 @@ class App
         return $container['response']->withJson(['error' => 'Interval Server Error'], 500);
       };
     };
+
+    $container['notAllowedHandler'] = function ($container) {
+      return function ($request, $response, $exception) use ($container) {
+        return $container['response']->withJson(['error' => 'Method not allowed'], 405);
+      };
+    };
   }
 
 }
