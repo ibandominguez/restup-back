@@ -12,9 +12,9 @@ App::create([
   'DB_PASS' => '',
 ])
 ->add('posts', [
-  ['title' => 'title', 'type' => 'string'],
-  ['title' => 'body',  'type' => 'string'],
-  ['title' => 'other', 'type' => 'string']
+  ['title' => 'title', 'type' => 'string', 'rules' => 'required'],
+  ['title' => 'body',  'type' => 'string', 'rules' => 'required'],
+  ['title' => 'date',  'type' => 'date',   'rules' => 'date']
 ])
 ->add('cars', [
   ['title' => 'brand', 'type' => 'string']
