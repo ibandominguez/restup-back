@@ -54,7 +54,7 @@ class Resource
   /**
    * @param Psr\Http\Message\ServerRequestInterface
    * @param Psr\Http\Message\ResponseInterface
-   * @return array
+   * @return Psr\Http\Message\ResponseInterface
    */
   public function index(Request $request, Response $response)
   {
@@ -94,7 +94,7 @@ class Resource
   /**
    * @param Psr\Http\Message\ServerRequestInterface
    * @param Psr\Http\Message\ResponseInterface
-   * @return stdClass
+   * @return Psr\Http\Message\ResponseInterface
    */
   public function show(Request $request, Response $response)
   {
@@ -120,7 +120,7 @@ class Resource
   /**
    * @param Psr\Http\Message\ServerRequestInterface
    * @param Psr\Http\Message\ResponseInterface
-   * @return bool
+   * @return Psr\Http\Message\ResponseInterface
    */
   public function save(Request $request, Response $response)
   {
@@ -141,30 +141,32 @@ class Resource
       endif;
     endforeach;
 
-    return $response->withJson($res, 201);
+    return $response->withJson($res, !empty($request->getAttribute('id')) ? 200 : 201);
   }
 
   /**
    * @param Psr\Http\Message\ServerRequestInterface
    * @param Psr\Http\Message\ResponseInterface
-   * @return bool
+   * @return Psr\Http\Message\ResponseInterface
    */
   public function update(Request $request, Response $response)
   {
-    $query = $this->db->prepare("update resources set type = '$this->title' where id = ?");
+    $id = $request->getAttribute('id');
+    $this->db->prepare("delete from fields where resource_id = ?")->execute([$id]);
 
-    return $query->execute([$request->getAttribute('id')]);
+    return $this->save($request, $response);
   }
 
   /**
    * @param Psr\Http\Message\ServerRequestInterface
    * @param Psr\Http\Message\ResponseInterface
-   * @return null
+   * @return Psr\Http\Message\ResponseInterface
    */
   public function delete(Request $request, Response $response)
   {
-    $this->db->prepare("delete from resources where id = ?")->execute([$request->getAttribute('id')]);
-    $this->db->prepare("delete from fields where resource_id = ?")->execute([$request->getAttribute('id')]);
+    $id = $request->getAttribute('id');
+    $this->db->prepare("delete from resources where id = ?")->execute([$id]);
+    $this->db->prepare("delete from fields where resource_id = ?")->execute([$id]);
 
     return $response->withJson(null, 204);
   }

@@ -24,12 +24,24 @@ class App
   protected $resources = [];
 
   /**
+   * @param array
+   * @return IbanDominguez\RestUp\App
+   */
+  public static function create($config)
+  {
+    return new self(
+      new PDO('mysql:host='.$config['DB_HOST'].';dbname='.$config['DB_NAME'], $config['DB_USER'], $config['DB_PASS']),
+      new Slim(['settings' => ['displayErrorDetails' => !empty($config['M_DEBUG']) ? $config['M_DEBUG'] : false]])
+    );
+  }
+
+  /**
    * @return void
    */
-  public function __construct(array $config)
+  public function __construct(PDO $db, Slim $slim)
   {
-    $this->config = $config;
-    $this->slim = new Slim(['settings' => ['displayErrorDetails' => true]]);
+    $this->db = $db;
+    $this->slim = $slim;
   }
 
   /**
@@ -57,7 +69,6 @@ class App
    */
   public function run($migrateDB)
   {
-    $this->bootDatabase();
     ($migrateDB) && $this->migrateDB();
     $this->bindRoutes();
     $this->slim->run();
@@ -75,18 +86,6 @@ class App
         $this->slim->map([strtoupper($route->method)], $route->path, $route->makeClousure());
       endforeach;
     endforeach;
-  }
-
-  /**
-   * @return void
-   */
-  private function bootDatabase()
-  {
-    $this->db = new PDO(
-      'mysql:host='.$this->config['DB_HOST'].';dbname='.$this->config['DB_NAME'],
-      $this->config['DB_USER'],
-      $this->config['DB_PASS']
-    );
   }
 
   /**
