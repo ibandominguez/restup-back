@@ -42,6 +42,7 @@ class App
   {
     $this->db = $db;
     $this->slim = $slim;
+    $this->setSlimDefaultConfigurations();
   }
 
   /**
@@ -108,6 +109,23 @@ class App
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
     )');
+  }
+
+  private function setSlimDefaultConfigurations()
+  {
+    $container = $this->slim->getContainer();
+
+    $container['notFoundHandler'] = function($container) {
+      return function ($request, $response) use ($container) {
+        return $container['response']->withJson(['error' => 'Not found'], 404);
+      };
+    };
+
+    $container['errorHandler'] = function ($container) {
+      return function ($request, $response, $exception) use ($container) {
+        return $container['response']->withJson(['error' => 'Interval Server Error'], 500);
+      };
+    };
   }
 
 }
