@@ -13,7 +13,7 @@ App::create([
 ])
 ->add('posts', [
   ['title' => 'title', 'type' => 'string', 'rules' => 'required'],
-  ['title' => 'body',  'type' => 'string', 'rules' => 'required'],
+  ['title' => 'body',  'type' => 'string'],
   ['title' => 'date',  'type' => 'date',   'rules' => 'date']
 ])
 ->add('cars', [
