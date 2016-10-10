@@ -31,7 +31,7 @@ class App
   {
     return new self(
       new PDO('mysql:host='.$config['DB_HOST'].';dbname='.$config['DB_NAME'], $config['DB_USER'], $config['DB_PASS']),
-      new Slim(['settings' => ['displayErrorDetails' => !empty($config['M_DEBUG']) ? $config['M_DEBUG'] : false]])
+      new Slim()
     );
   }
 
@@ -50,10 +50,17 @@ class App
    * @param array
    * @return IbanDominguez\RestUp\App
    */
-  public function add($title, $fields)
+  public function add($title, $fields, $options = [])
   {
-    $this->resources[] = new Resource($title, $fields);
+    $this->resources[] = new Resource($title, $fields, $options);
 
+    return $this;
+  }
+
+  /**
+   * @return void
+   */
+  public function auth() {
     return $this;
   }
 
