@@ -34,10 +34,11 @@ class Route
    * @param array
    * @return void
    */
-  public function __construct($name, Resource $resource)
+  public function __construct($name, Resource $resource, $protected = false)
   {
     $this->name = $name;
     $this->resource = $resource;
+    $this->protected = $protected;
     $this->path = $this->getPath($this->name);
     $this->method = $this->getMethod($this->name);
   }

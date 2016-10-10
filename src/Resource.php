@@ -259,10 +259,11 @@ class Resource
   private function handleRoutes()
   {
     $exceptionRoutes = !empty($this->options['except']) ? $this->options['except'] : [];
+    $protectedRoutes = !empty($this->options['protected']) ? $this->options['protected'] : [];
 
     foreach ($this->routesNames as $route):
       if (!in_array($route, $exceptionRoutes)):
-        $this->routes[] = new Route($route, $this);
+        $this->routes[] = new Route($route, $this, in_array($route, $protectedRoutes));
       endif;
     endforeach;
   }
