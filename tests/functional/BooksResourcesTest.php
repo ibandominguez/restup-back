@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use IbanDominguez\RestUp\App;
 use GuzzleHttp\Client;
 
-class BooksResourcesTest extends TestCase
+class BooksResourceTest extends TestCase
 {
 
   public function setUp()
