@@ -19,6 +19,11 @@ class Resource
   /**
    * @var array
    */
+  public $routesNames = ['index', 'show', 'save', 'update', 'delete'];
+
+  /**
+   * @var array
+   */
   public $types = ['string', 'number', 'date', 'datetime'];
 
   /**
@@ -42,10 +47,11 @@ class Resource
    * @param array
    * @return void
    */
-  public function __construct($title, array $fields)
+  public function __construct($title, array $fields, $options = [])
   {
     $this->title = $title;
     $this->fields = $fields;
+    $this->options = $options;
     $this->validateFields();
     $this->handleRoutes();
   }
@@ -252,8 +258,12 @@ class Resource
    */
   private function handleRoutes()
   {
-    foreach (['index', 'show', 'save', 'update', 'delete'] as $route):
-      $this->routes[] = new Route($route, $this);
+    $exceptionRoutes = !empty($this->options['except']) ? $this->options['except'] : [];
+
+    foreach ($this->routesNames as $route):
+      if (!in_array($route, $exceptionRoutes)):
+        $this->routes[] = new Route($route, $this);
+      endif;
     endforeach;
   }
 

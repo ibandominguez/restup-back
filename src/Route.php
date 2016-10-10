@@ -95,7 +95,8 @@ class Route
       return [];
     endif;
 
-    $validator = new Validator($request->getParsedBody(), $this->resource->getFieldRules());
+    $body = $request->getParsedBody();
+    $validator = new Validator(!empty($body) ? $body : [], $this->resource->getFieldRules());
 
     return $validator->passes() ? [] : $validator->getErrors();
   }
