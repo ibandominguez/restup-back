@@ -3,10 +3,16 @@
 namespace IbanDominguez\RestUp;
 
 use Slim\App as Slim;
+use Firebase\JWT\JWT;
+use Exception;
 use PDO;
 
 class App
 {
+  /**
+   * @var array
+   */
+  protected $config;
 
   /**
    * @var Slim\App
@@ -31,17 +37,19 @@ class App
   {
     return new self(
       new PDO('mysql:host='.$config['DB_HOST'].';dbname='.$config['DB_NAME'], $config['DB_USER'], $config['DB_PASS']),
-      new Slim()
+      new Slim(),
+      $config
     );
   }
 
   /**
    * @return void
    */
-  public function __construct(PDO $db, Slim $slim)
+  public function __construct(PDO $db, Slim $slim, array $config = [])
   {
     $this->db = $db;
     $this->slim = $slim;
+    $this->config = $config;
     $this->setSlimDefaultConfigurations();
   }
 
@@ -58,9 +66,28 @@ class App
   }
 
   /**
-   * @return void
+   * @param array
+   * @return IbanDominguez\RestUp\App
    */
-  public function auth() {
+  public function auth($users = []) {
+    $config = $this->config;
+
+    $this->slim->post('/tokens', function($request, $response) use ($users, $config) {
+      $email = $request->getParam('email');
+      $password = $request->getParam('password');
+
+      if (!empty($users[$email]) && $users[$email] == $password):
+        return $response->withJson(['token' => JWT::encode([
+          'iss' => 'http://example.org',
+          'aud' => 'http://example.com',
+          'iat' => 1356999524,
+          'nbf' => 1357000000
+        ], $config['JWT_KEY'])], 201);
+      endif;
+
+      return $response->withJson(['error' => 'invalid credentials'], 400);
+    });
+
     return $this;
   }
 
@@ -83,6 +110,26 @@ class App
   }
 
   /**
+   * @return callable
+   */
+  public function getJWTMiddleware()
+  {
+    $key = $this->config['JWT_KEY'];
+
+    return function($request, $response, $next) use ($key) {
+      $token = $request->getHeaderLine('Authorization') ? str_replace('Bearer ', '', $request->getHeaderLine('Authorization')) : null;
+
+      try {
+        $decoded = JWT::decode($token, $key, ['HS256']);
+      } catch (Exception $e) {
+        return $response->withJson(['error' => $e->getMessage()], 401);
+      }
+
+      return $next($request, $response);
+    };
+  }
+
+  /**
    * @return void
    */
   private function bindRoutes()
@@ -91,7 +138,8 @@ class App
       $resource->setDB($this->db);
 
       foreach ($resource->routes as $route):
-        $this->slim->map([strtoupper($route->method)], $route->path, $route->makeClousure());
+        $referenceRoute = $this->slim->map([strtoupper($route->method)], $route->path, $route->makeClousure());
+        ($route->protected) && $referenceRoute->add($this->getJWTMiddleware());
       endforeach;
     endforeach;
   }

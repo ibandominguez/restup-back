@@ -9,10 +9,12 @@
     "require": {
         "php": ">=5.5.0",
         "slim/slim": "^3.5",
-        "ibandominguez/validator": "1.2.*"
+        "ibandominguez/validator": "1.2.*",
+        "firebase/php-jwt": "^4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.5"
+        "phpunit/phpunit": "^5.5",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "autoload": {
         "psr-4": {

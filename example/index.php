@@ -5,6 +5,7 @@ require __DIR__.'/../vendor/autoload.php';
 use IbanDominguez\RestUp\App;
 
 App::create([
+  'JWT_KEY' => 'supersecret',
   'DB_HOST' => 'localhost',
   'DB_NAME' => 'prueba',
   'DB_USER' => 'root',
@@ -13,15 +14,16 @@ App::create([
 ->auth([
   'admin@email.com' => 'admin'
 ])
+->add('books', [
+  ['title' => 'title', 'type' => 'string', 'rules' => 'required'],
+  ['title' => 'date',  'type' => 'date',   'rules' => 'required|date'],
+])
 ->add('posts', [
   ['title' => 'title', 'type' => 'string', 'rules' => 'required'],
   ['title' => 'body',  'type' => 'string'],
   ['title' => 'date',  'type' => 'date',   'rules' => 'date']
 ], [
-  'except' => ['show']
-])
-->add('cars', [
-  ['title' => 'brand', 'type' => 'string', 'rules' => 'required'],
-  ['title' => 'made_at',  'type' => 'datetime']
+  'except'    => ['show'],
+  'protected' => ['save']
 ])
 ->run(true);

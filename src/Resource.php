@@ -82,7 +82,7 @@ class Resource
     $query = $this->db->prepare("
       select * from resources
       join (
-        select fields.resource_id, group_concat(fields.title, '$this->groupSeparator', fields.value SEPARATOR '$this->groupSeparator') as data
+        select fields.resource_id, group_concat(fields.title, '$this->groupSeparator', fields.value SEPARATOR '$this->groupsSeparator') as data
         from fields
         group by fields.resource_id
       ) as fields on fields.resource_id = resources.id
@@ -90,7 +90,7 @@ class Resource
     ");
     $query->execute();
 
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $results = $query->fetchAll(PDO::FETCH_ASSOC); 
     $parsedResults = [];
 
     foreach ($results as $result):
@@ -259,10 +259,11 @@ class Resource
   private function handleRoutes()
   {
     $exceptionRoutes = !empty($this->options['except']) ? $this->options['except'] : [];
+    $protectedRoutes = !empty($this->options['protected']) ? $this->options['protected'] : [];
 
     foreach ($this->routesNames as $route):
       if (!in_array($route, $exceptionRoutes)):
-        $this->routes[] = new Route($route, $this);
+        $this->routes[] = new Route($route, $this, in_array($route, $protectedRoutes));
       endif;
     endforeach;
   }
