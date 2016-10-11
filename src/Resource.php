@@ -19,6 +19,11 @@ class Resource
   /**
    * @var array
    */
+  public $fields = [];
+
+  /**
+   * @var array
+   */
   public $routesNames = ['index', 'show', 'save', 'update', 'delete'];
 
   /**
@@ -90,7 +95,7 @@ class Resource
     ");
     $query->execute();
 
-    $results = $query->fetchAll(PDO::FETCH_ASSOC); 
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
     $parsedResults = [];
 
     foreach ($results as $result):
