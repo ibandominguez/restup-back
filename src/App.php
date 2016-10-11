@@ -105,6 +105,7 @@ class App
   public function run($migrateDB = false)
   {
     ($migrateDB) && $this->migrateDB();
+    $this->setUpResourceInfo();
     $this->bindRoutes();
     $this->slim->run();
   }
@@ -169,9 +170,36 @@ class App
   /**
    * @return void
    */
+  private function setUpResourceInfo()
+  {
+    $resources = array_map(function($resource) {
+      return ['title' => $resource->title, 'fields' => $resource->fields];
+    }, $this->resources);
+
+    $this->slim->get('/resources', function($request, $response) use ($resources) {
+      return $response->withJson($resources, 200);
+    });
+  }
+
+  /**
+   * @return void
+   */
   private function setSlimDefaultConfigurations()
   {
     $container = $this->slim->getContainer();
+
+    $this->slim->options('/{routes:.+}', function ($request, $response, $args) {
+      return $response;
+    });
+
+    $this->slim->add(function ($req, $res, $next) {
+      $response = $next($req, $res);
+
+      return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    });
 
     $container['notFoundHandler'] = function($container) {
       return function ($request, $response) use ($container) {

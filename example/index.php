@@ -9,14 +9,14 @@ App::create([
   'DB_HOST' => 'localhost',
   'DB_NAME' => 'prueba',
   'DB_USER' => 'root',
-  'DB_PASS' => '',
+  'DB_PASS' => ''
 ])
 ->auth([
   'admin@email.com' => 'admin'
 ])
 ->add('books', [
   ['title' => 'title', 'type' => 'string', 'rules' => 'required'],
-  ['title' => 'date',  'type' => 'date',   'rules' => 'required|date'],
+  ['title' => 'date',  'type' => 'date',   'rules' => 'required|date']
 ])
 ->add('posts', [
   ['title' => 'title', 'type' => 'string', 'rules' => 'required'],
