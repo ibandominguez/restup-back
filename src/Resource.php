@@ -154,7 +154,7 @@ class Resource
     $request = $request->withAttribute('id', $this->db->lastInsertId());
     $res = $this->updateFields($request);
 
-    return $response->withJson($res, 200);
+    return $response->withJson($res, 201);
   }
 
   /**
@@ -170,7 +170,7 @@ class Resource
     $this->db->prepare("delete from fields where resource_id = ?")->execute([$id]);
     $res = $this->updateFields($request);
 
-    return $response->withJson($res, 201);
+    return $response->withJson($res, 200);
   }
 
   /**
